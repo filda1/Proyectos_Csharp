@@ -1,0 +1,86 @@
+
+   // CONECTAR INVENTOR
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // Instalar librerias autodesk inventor, en  preferencias
+            try
+            {
+                // Conexion Inventor
+                invertorApplication = (Inventor.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Inventor.Application");
+                MessageBox.Show("Conectado");
+            }
+            catch
+            {
+                // Abrir Inventor
+                Type invType = System.Type.GetTypeFromProgID("Inventor.Application");
+                invertorApplication = System.Activator.CreateInstance(invType) as Inventor.Application;
+                invertorApplication.Visible = true;
+            }
+          
+        }
+
+****************************************************************************************************************
+        // Nª de DOC DE INVENTOR
+        private void button2_Click(object sender, EventArgs e)
+        {
+            // Nª de documentos en Inventor
+
+            try
+            {
+                invertorApplication = (Inventor.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Inventor.Application");
+
+                string numeroDoc = invertorApplication.Documents.Count.ToString();
+                MessageBox.Show("numeroDoc:" + " " + numeroDoc);
+            }
+            catch
+            {
+                MessageBox.Show("No hay documentos");
+
+            }
+               
+        }
+
+******************************************************************************************************************
+        // HACER CUBO ,  1.Tienes tocar el el boton de Conectar y 2. despues Tocar El Boton de Extrude
+        private void button3_Click(object sender, EventArgs e)
+        {
+     
+
+            PartDocument oPartDoc = (PartDocument)invertorApplication.Documents.
+                                    Add(DocumentTypeEnum.kPartDocumentObject,
+                                    invertorApplication.FileManager.GetTemplateFile(DocumentTypeEnum.kPartDocumentObject));
+
+            PartComponentDefinition oPartCompDef = oPartDoc.ComponentDefinition;
+
+
+            // DISENO DE UN CUBO
+
+            //Plano de Diseno
+            PlanarSketch oSketch = oPartCompDef.Sketches.Add(oPartCompDef.WorkPlanes[3]);
+
+              //Geometria
+              TransientGeometry transGeo = invertorApplication.TransientGeometry;
+
+               // Rectangulo
+               SketchEntitiesEnumerator oRectangule = oSketch.SketchLines.AddAsTwoPointRectangle
+                                                                     (transGeo.CreatePoint2d(0,0),
+                                                                      transGeo.CreatePoint2d(4,3));
+
+
+                 // Crear Solido
+                 Profile oProfile = oSketch.Profiles.AddForSolid();
+
+                  // Definicion de Extruccion
+                  ExtrudeDefinition ExtrudeDef = oPartCompDef.Features.ExtrudeFeatures.
+                                           CreateExtrudeDefinition(oProfile, PartFeatureOperationEnum.kJoinOperation);
+
+                   // Altura de Extruccion
+                   ExtrudeDef.SetDistanceExtent(4,PartFeatureExtentDirectionEnum.kNegativeExtentDirection);
+
+                    // Extruccion
+                    ExtrudeFeature oExtrude = oPartCompDef.Features.ExtrudeFeatures.Add(ExtrudeDef);
+                       
+
+
+        }
+    }
