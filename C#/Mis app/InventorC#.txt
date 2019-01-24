@@ -1,0 +1,106 @@
+ Inventor.Application invertorApplication;
+ Inventor.Document oDoc;
+ Inventor.PropertySet customPropSet;
+ Inventor.Property prop;
+
+ 
+ ApprenticeServerComponent oApprentice;
+ ApprenticeServerDocument oApprenticeDoc;
+
+ AssemblyDocument oDoc1;
+
+ PropertySets oPropsets;
+ PropertySet oPropSet;
+
+ UnitsOfMeasure oUOM;     // Unidad de medidas
+ UnitsTypeEnum eLengthUnit;
+
+
+   var dLength =0;
+   String sLengthUnit;
+   String sVolumeUnit;
+   String sVolume;
+
+   AssemblyDocument oDoc;
+   ComponentOccurrence oCompOcc;
+   PartComponentDefinition oPartCompDef;
+   ExtrudeFeature oExtrudeFeature;
+   ExtrudeFeatureProxy elExtrudeFeatureProxy;
+   Asset localAsset;
+   Inventor.PropertySet customPropSet;
+
+
+  // CONEXION INVENTOR
+
+       invertorApplication = (Inventor.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Inventor.Application");
+
+
+          // NOMBRE DE DOCUMENTO
+             var NombreDoc = invertorApplication.ActiveDocument.DisplayName;
+
+                
+           // MEDIDAS DE UNIDAD
+              oUOM = invertorApplication.ActiveDocument.UnitsOfMeasure;
+
+            // TiPO DE MEDIDA
+                eLengthUnit = oUOM.LengthUnits;              // =======================================================================> KInchLenthUnits
+
+                sLengthUnit = oUOM.GetStringFromType(eLengthUnit);   // (Inch)
+
+                
+
+                // MEDIDA DE UN VOLUMEN ---------------------> Pulgadas cúbicas
+                sVolumeUnit = sLengthUnit + "^3";      
+                 sVolume = oUOM.GetStringFromValue(36.567, sVolumeUnit);  // Ej: Convierte en pulgadas cúbicas
+
+
+
+
+********************************************************************************************************************************************************************
+
+
+        // PROPIEDADES Personalizadas
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Boolean propExists = true;
+
+
+            //Connect to a running instance of Inventor. 
+            // Watch out for the wrapped line. 
+            Inventor.Application invApp = null;
+             invApp = (Inventor.Application)System.Runtime.InteropServices.Marshal.GetActiveObject("Inventor.Application");
+
+            // Get the active document. 
+            Inventor.Document doc = invApp.ActiveDocument;
+
+            // Get the custom property set.  
+            // Watch out for the wrapped line. 
+            Inventor.PropertySet customPropSet;
+            customPropSet = doc.PropertySets["Inventor User Defined Properties"];
+
+            // Get the existing property, if it exists. 
+            Inventor.Property prop = null;
+
+            prop = customPropSet["Sample1"];
+            // prop.Name   -------------------------------------------------------------------------------> Obtiene Nombre de la propiedad personalizada
+            // prop.Value --------------------------------------------------------------------------------> Obtiene Valor de la propiedad personlizada
+            // prop.Delete -------------------------------------------------------------------------------> Elimina la propiedad personalizada
+
+            //prop = customPropSet.Add("Cambio de Propiedad 2", "Sample1", null);
+
+
+
+            // CAMBIO DE VALOR DE PROPIEDAD PERSONALIZADA
+            if (!propExists)
+            {
+                // En caso q falle
+                prop = customPropSet.Add("Ola", "Sample1", null);       //------------------------------------------------------------> Cambio de valor de propiedad
+            }
+            else
+            {
+                // Cambio el vlor de propiedad 
+                prop.Value = "Ola";                          //------------------------------------------------------------> Cambio de valor de propiedad
+
+                MessageBox.Show(prop.Name);
+            }
+        }

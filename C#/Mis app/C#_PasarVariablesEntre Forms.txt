@@ -1,0 +1,77 @@
+ C# PASAR VARIABLES
+
+      FORM1  <==========> FORM2
+
+
+     1- Ejemplo de Form1 a form2
+*************************************************************************************************
+Form1.cs
+
+    
+        public void button1_Click(object sender, EventArgs e)
+        {
+            String text = textBox1.Text;
+            Form2 fr2 = new Form2(text);
+          
+
+            fr2.Show();
+            this.Hide();
+
+        }
+
+
+FORM2.cs
+
+
+       public Form2(String text)
+        {
+            InitializeComponent();
+            textBox1.Text = text;
+        }
+
+
+
+
+
+      2 - Metodo 2 (DELEGATE + EVENT ) , De Form2 ========> Form1
+************************************************************************************************
+
+
+   FORM2.cs
+
+
+     public delegate void pasar(String dato);
+     public event pasar pasado;
+
+
+       private void button1_Click(object sender, EventArgs e)
+        {
+
+            pasado(textBox1.Text);
+            this.Dispose();
+              
+
+        }
+   
+
+  FORM1.cs
+   
+     public void button1_Click(object sender, EventArgs e)
+        {
+
+            Form2 fr2 = new Form2();
+            fr2.pasado += new Form2.pasar(ejecutar);
+
+            fr2.ShowDialog();
+               
+        }
+
+
+        public void ejecutar(String dato)
+        {
+            textBox1.Text = dato;
+        }
+
+
+
+
